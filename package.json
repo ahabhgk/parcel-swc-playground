@@ -2,11 +2,13 @@
   "name": "parcel-swc-playground",
   "version": "1.0.0",
   "description": "",
-  "source": "index.html",
+  "source": "src/index.html",
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
-    "build-wasm": "sh ./scripts/build-wasm.sh"
+    "build-wasm": "sh ./scripts/build-wasm.sh",
+    "lint": "gts lint",
+    "clean": "gts clean"
   },
   "repository": {
     "type": "git",
@@ -19,8 +21,13 @@
   },
   "homepage": "https://github.com/ahabhgk/parcel-swc-playground#readme",
   "devDependencies": {
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "gts": "^3.1.0",
     "parcel": "^2.5.0",
-    "wasm-pack": "^0.10.2"
+    "wasm-pack": "^0.10.2",
+    "typescript": "^4.0.3",
+    "@types/node": "^14.11.2"
   },
   "dependencies": {
     "react": "^18.1.0",
