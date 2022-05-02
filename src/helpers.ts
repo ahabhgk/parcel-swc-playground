@@ -1,3 +1,5 @@
+import * as wasm from '../parcel/packages/transformers/js/wasm/dist-web';
+
 interface TransformConfig {
   filename: string;
   code: Uint8Array;
@@ -148,7 +150,6 @@ type DiagnosticSeverity =
 type Transform = (config: TransformConfig) => TransformResult;
 
 export async function loadTransformer(): Promise<Transform> {
-  const wasm = await import('../parcel/packages/transformers/js/wasm/dist-web');
   await wasm.default();
   return wasm.transform;
 }

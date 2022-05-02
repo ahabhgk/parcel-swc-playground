@@ -1,18 +1,20 @@
-import { useState, Suspense, ChangeEventHandler } from 'react';
+import {useState, Suspense, ChangeEventHandler} from 'react';
 import useSWR from 'swr';
-import { decode, encode, loadTransformer } from './helpers';
+import {decode, encode, loadTransformer} from './helpers';
 
 function App() {
-  const { data: transform } = useSWR('parcel-swc-wasm', loadTransformer, { suspense: true });
+  const {data: transform} = useSWR('parcel-swc-wasm', loadTransformer, {
+    suspense: true,
+  });
   const [code, setCode] = useState('');
 
-  const handleCodeChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+  const handleCodeChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
     const code = e.target.value;
     const encoded = encode(code);
     const result = handleTransform(encoded);
     console.log(result);
     setCode(code);
-  }
+  };
 
   const handleTransform = (code: Uint8Array) => {
     try {
@@ -57,7 +59,7 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <Suspense fallback={<div>loading...</div>}>
