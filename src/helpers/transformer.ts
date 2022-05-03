@@ -1,6 +1,6 @@
-import * as wasm from '../parcel/packages/transformers/js/wasm/dist-web';
+import * as wasm from '../../parcel/packages/transformers/js/wasm/dist-web';
 
-interface TransformConfig {
+export interface TransformConfig {
   filename: string;
   code: Uint8Array;
   module_id: string;
@@ -32,7 +32,7 @@ interface TransformConfig {
   is_swc_helpers: boolean;
 }
 
-interface TransformResult {
+export interface TransformResult {
   code: Uint8Array;
   map?: string;
   shebang?: string;
@@ -45,7 +45,7 @@ interface TransformResult {
   has_node_replacements: boolean;
 }
 
-interface DependencyDescriptor {
+export interface DependencyDescriptor {
   kind: DependencyKind;
   loc: SourceLocation;
   specifier: string;
@@ -56,7 +56,7 @@ interface DependencyDescriptor {
   placeholder?: string;
 }
 
-interface HoistResult {
+export interface HoistResult {
   imported_symbols: ImportedSymbol[];
   exported_symbols: ExportedSymbol[];
   re_exports: ImportedSymbol[];
@@ -69,13 +69,13 @@ interface HoistResult {
   should_wrap: boolean;
 }
 
-interface CollectResult {
+export interface CollectResult {
   imports: CollectImportedSymbol[];
   exports: CollectExportedSymbol[];
   exports_all: CollectExportedAll[];
 }
 
-type DependencyKind =
+export type DependencyKind =
   | 'Import'
   | 'Export'
   | 'DynamicImport'
@@ -86,29 +86,29 @@ type DependencyKind =
   | 'Url'
   | 'File';
 
-type ImportKind = 'Require' | 'Import' | 'DynamicImport';
+export type ImportKind = 'Require' | 'Import' | 'DynamicImport';
 
-interface SourceLocation {
+export interface SourceLocation {
   start_line: number;
   start_col: number;
   end_line: number;
   end_col: number;
 }
 
-interface ExportedSymbol {
+export interface ExportedSymbol {
   local: string;
   exported: string;
   loc: SourceLocation;
 }
 
-interface ImportedSymbol {
+export interface ImportedSymbol {
   source: string;
   local: string;
   imported: string;
   loc: SourceLocation;
 }
 
-interface CollectImportedSymbol {
+export interface CollectImportedSymbol {
   source: string;
   local: string;
   imported: string;
@@ -116,19 +116,19 @@ interface CollectImportedSymbol {
   kind: ImportKind;
 }
 
-interface CollectExportedSymbol {
+export interface CollectExportedSymbol {
   source?: string;
   local: string;
   exported: string;
   loc: SourceLocation;
 }
 
-interface CollectExportedAll {
+export interface CollectExportedAll {
   source: string;
   loc: SourceLocation;
 }
 
-interface Diagnostic {
+export interface Diagnostic {
   message: string;
   code_highlights?: CodeHighlight[];
   hints?: string[];
@@ -137,19 +137,19 @@ interface Diagnostic {
   documentation_url?: string;
 }
 
-interface CodeHighlight {
+export interface CodeHighlight {
   message?: string;
   loc: SourceLocation;
 }
 
-type DiagnosticSeverity =
+export type DiagnosticSeverity =
   | 'Error' // Fails the build with an error.
   | 'Warning' // Logs a warning, but the build does not fail.
   | 'SourceError'; // An error if this is source code in the project, or a warning if in node_modules.
 
-type Transform = (config: TransformConfig) => TransformResult;
+export type Transform = (config: TransformConfig) => TransformResult;
 
-export async function loadTransformer(): Promise<Transform> {
+export async function load(): Promise<Transform> {
   await wasm.default();
   return wasm.transform;
 }
