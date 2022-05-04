@@ -7,7 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: Production
     steps:
       - name: Clone
         uses: actions/checkout@v3
@@ -24,6 +23,7 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+      - uses: Swatinem/rust-cache@v1
       - name: Install
         run: yarn install && yarn global add wasm-pack
       - name: Lint
@@ -35,6 +35,6 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-args: ${{ fromJSON('["--prod", ""]')[github.ref != 'refs/heads/main'] }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
-          working-directory: ./
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./dist
