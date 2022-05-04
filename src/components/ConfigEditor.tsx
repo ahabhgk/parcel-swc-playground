@@ -5,26 +5,21 @@ import {Box, Flex, Heading} from '@chakra-ui/react';
 import {sharedEditorOptions, useEditorTheme} from '../helpers/editor';
 
 interface Props {
-  config: string | undefined;
+  config: string;
   onChange: OnChange;
 }
 
 export default function OutputEditor({config, onChange}: Props) {
   const monaco = useMonaco();
   const monacoTheme = useEditorTheme();
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
-    monaco?.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSyntaxValidation: true,
-      noSemanticValidation: true,
-      noSuggestionDiagnostics: true,
+    monaco?.languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: false,
     });
   }, [monaco]);
 
-  const handleEditorDidMount = (instance: editor.IStandaloneCodeEditor) => {
-    editorRef.current = instance;
-  };
+  console.log(config);
 
   return (
     <Flex direction="column" minW={0} minH={0}>
@@ -40,7 +35,6 @@ export default function OutputEditor({config, onChange}: Props) {
           defaultLanguage="json"
           theme={monacoTheme}
           options={sharedEditorOptions}
-          onMount={handleEditorDidMount}
           onChange={onChange}
         />
       </Box>

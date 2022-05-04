@@ -145,7 +145,7 @@ export type DiagnosticSeverity =
   | 'Warning' // Logs a warning, but the build does not fail.
   | 'SourceError'; // An error if this is source code in the project, or a warning if in node_modules.
 
-export type Transformed = {output: string; result: TransformResult};
+export type Transformed = {output: string; result: string};
 
 export type Transform = (code: string, config: TransformConfig) => Transformed;
 
@@ -157,7 +157,7 @@ export async function load(): Promise<Transform> {
     delete result.code;
     return {
       output,
-      result,
+      result: JSON.stringify(result, null, 2),
     };
   };
 }

@@ -61,14 +61,15 @@ export default function Workspace() {
     }
   };
 
-  const {output, result} = useMemo<Partial<Transformed>>(() => {
+  const {output, result} = useMemo<Transformed>(() => {
     if (transform) {
       try {
         return transform(code, JSON.parse(config));
-        // eslint-disable-next-line no-empty
-      } catch {}
+      } catch (e) {
+        return {output: (e as Error)?.message ?? '', result: ''};
+      }
     }
-    return {};
+    return {output: '', result: ''};
   }, [code, config, transform]);
 
   if (!transform || !monaco) {

@@ -5,7 +5,7 @@ import {Box, Flex, Heading} from '@chakra-ui/react';
 import {sharedEditorOptions, useEditorTheme} from '../helpers/editor';
 
 interface Props {
-  code: string | undefined;
+  code: string;
   onChange: OnChange;
 }
 

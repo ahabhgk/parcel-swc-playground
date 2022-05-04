@@ -9,13 +9,11 @@ const editorOptions = {
 };
 
 interface Prop {
-  result: Omit<TransformResult, 'code'> | undefined;
+  result: string;
 }
 
 export default function ResultEditor({result}: Prop) {
   const monacoTheme = useEditorTheme();
-
-  const output = JSON.stringify(result, null, 2);
 
   return (
     <Flex direction="column" minW={0} minH={0}>
@@ -26,7 +24,7 @@ export default function ResultEditor({result}: Prop) {
       </Flex>
       <Box height="full" borderWidth="1px">
         <Editor
-          value={output}
+          value={result}
           language="json"
           defaultLanguage="json"
           theme={monacoTheme}
