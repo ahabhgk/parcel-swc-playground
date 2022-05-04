@@ -25,6 +25,7 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
         with:
+          working-directory: ./parcel
           target-dir: ./parcel/target
       - name: Install
         run: yarn install && yarn global add wasm-pack
