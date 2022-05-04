@@ -5,11 +5,11 @@ import {Box, Flex, Heading} from '@chakra-ui/react';
 import {sharedEditorOptions, useEditorTheme} from '../helpers/editor';
 
 interface Props {
-  code: string | undefined;
+  config: string | undefined;
   onChange: OnChange;
 }
 
-export default function OutputEditor({code, onChange}: Props) {
+export default function OutputEditor({config, onChange}: Props) {
   const monaco = useMonaco();
   const monacoTheme = useEditorTheme();
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -30,14 +30,14 @@ export default function OutputEditor({code, onChange}: Props) {
     <Flex direction="column" minW={0} minH={0}>
       <Flex justifyContent="space-between" alignItems="center">
         <Heading size="md" mb="8px">
-          Input
+          Config
         </Heading>
       </Flex>
       <Box height="full" borderWidth="1px">
         <Editor
-          value={code}
-          language="typescript"
-          defaultLanguage="typescript"
+          value={config}
+          language="json"
+          defaultLanguage="json"
           theme={monacoTheme}
           options={sharedEditorOptions}
           onMount={handleEditorDidMount}

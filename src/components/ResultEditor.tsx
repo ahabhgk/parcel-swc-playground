@@ -1,7 +1,7 @@
-import {useEffect} from 'react';
-import Editor, {useMonaco} from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 import {Box, Flex, Heading} from '@chakra-ui/react';
 import {sharedEditorOptions, useEditorTheme} from '../helpers/editor';
+import {TransformResult} from '../helpers/transformer';
 
 const editorOptions = {
   ...sharedEditorOptions,
@@ -9,33 +9,26 @@ const editorOptions = {
 };
 
 interface Prop {
-  code: string | undefined;
+  result: Omit<TransformResult, 'code'> | undefined;
 }
 
-export default function OutputEditor({code}: Prop) {
-  const monaco = useMonaco();
+export default function ResultEditor({result}: Prop) {
   const monacoTheme = useEditorTheme();
 
-  useEffect(() => {
-    monaco?.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-      noSyntaxValidation: true,
-      noSemanticValidation: true,
-      noSuggestionDiagnostics: true,
-    });
-  }, [monaco]);
+  const output = JSON.stringify(result, null, 2);
 
   return (
     <Flex direction="column" minW={0} minH={0}>
       <Flex justifyContent="space-between" alignItems="center">
         <Heading size="md" mb="8px">
-          Output
+          Result
         </Heading>
       </Flex>
       <Box height="full" borderWidth="1px">
         <Editor
-          value={code}
-          language="javascript"
-          defaultLanguage="javascript"
+          value={output}
+          language="json"
+          defaultLanguage="json"
           theme={monacoTheme}
           options={editorOptions}
         />
