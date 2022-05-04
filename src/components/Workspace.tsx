@@ -63,7 +63,10 @@ export default function Workspace() {
 
   const {output, result} = useMemo<Partial<Transformed>>(() => {
     if (transform) {
-      return transform(code, JSON.parse(config));
+      try {
+        return transform(code, JSON.parse(config));
+        // eslint-disable-next-line no-empty
+      } catch {}
     }
     return {};
   }, [code, config, transform]);
