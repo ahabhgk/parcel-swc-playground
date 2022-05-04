@@ -2,7 +2,6 @@ import * as wasm from '../../parcel/packages/transformers/js/wasm/dist-web';
 
 export interface TransformConfig {
   filename: string;
-  code: Uint8Array;
   module_id: string;
   project_root: string;
   replace_env: boolean;
@@ -33,7 +32,6 @@ export interface TransformConfig {
 }
 
 export interface TransformResult {
-  code: Uint8Array;
   map?: string;
   shebang?: string;
   dependencies: DependencyDescriptor[];
@@ -147,19 +145,29 @@ export type DiagnosticSeverity =
   | 'Warning' // Logs a warning, but the build does not fail.
   | 'SourceError'; // An error if this is source code in the project, or a warning if in node_modules.
 
-export type Transform = (config: TransformConfig) => TransformResult;
+export type Transformed = {output: string; result: TransformResult};
+
+export type Transform = (code: string, config: TransformConfig) => Transformed;
 
 export async function load(): Promise<Transform> {
   await wasm.default();
-  return wasm.transform;
+  return (code: string, config: TransformConfig) => {
+    const result = wasm.transform({code: encode(code), ...config});
+    const output = decode(result.code);
+    delete result.code;
+    return {
+      output,
+      result,
+    };
+  };
 }
 
 const enc = new TextEncoder();
-export function encode(str: string) {
+function encode(str: string) {
   return enc.encode(str);
 }
 
 const dec = new TextDecoder();
-export function decode(buf?: BufferSource) {
+function decode(buf?: BufferSource) {
   return dec.decode(buf);
 }

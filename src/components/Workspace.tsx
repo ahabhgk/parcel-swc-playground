@@ -1,46 +1,14 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useMemo} from 'react';
 import useSWR from 'swr';
-import {
-  encode,
-  load,
-  TransformConfig,
-  TransformResult,
-} from '../helpers/transformer';
-import styled from '@emotion/styled';
-import OutputEditor from './OutputEditor';
+import {load, TransformConfig, Transformed} from '../helpers/transformer';
 import InputEditor from './InputEditor';
+import OutputEditor from './OutputEditor';
+import ConfigEditor from './ConfigEditor';
 import {loader, OnChange} from '@monaco-editor/react';
-import {Center, CircularProgress} from '@chakra-ui/react';
+import {Center, CircularProgress, Grid} from '@chakra-ui/react';
+import ResultEditor from './ResultEditor';
 
-const Main = styled.main`
-  display: grid;
-  padding: 1em;
-  gap: 1em;
-
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(3, 1fr);
-  grid-template-areas: 'sidebar' 'input' 'output';
-
-  min-height: 88vh;
-
-  @media screen and (min-width: 600px) {
-    grid-template-columns: 256px 1fr;
-    grid-template-rows: repeat(2, 1fr);
-    grid-template-areas: 'sidebar input' 'sidebar output';
-
-    min-height: calc(100vh - 80px);
-  }
-
-  @media screen and (min-width: 1200px) {
-    grid-template-columns: 256px repeat(2, 1fr);
-    grid-template-rows: 1fr;
-    grid-template-areas: 'sidebar input output';
-
-    min-height: calc(100vh - 80px);
-  }
-`;
-
-const CONFIG: Omit<TransformConfig, 'code'> = {
+const DEFAULT_CONFIG: Omit<TransformConfig, 'code'> = {
   filename: 'index.ts',
   module_id: 'index',
   project_root: '/',
@@ -77,9 +45,9 @@ const CONFIG: Omit<TransformConfig, 'code'> = {
 
 export default function Workspace() {
   const {data: monaco} = useSWR('monaco', () => loader.init());
-  const {data: transform} = useSWR('parcel-swc-wasm', load);
+  const {data: transform} = useSWR('parcel-swc-wasm', () => load());
   const [code, setCode] = useState('');
-  const [result, setResult] = useState<TransformResult>();
+  const [config, setConfig] = useState(JSON.stringify(DEFAULT_CONFIG, null, 2));
 
   const handleCodeChange: OnChange = code => {
     if (code) {
@@ -87,20 +55,18 @@ export default function Workspace() {
     }
   };
 
-  const handleTransform = useCallback(
-    (code: Uint8Array) => {
-      if (transform) {
-        const result = transform({code, ...CONFIG});
-        setResult(result);
-        console.log(result);
-      }
-    },
-    [transform]
-  );
+  const handleConfigChange: OnChange = config => {
+    if (config) {
+      setConfig(config);
+    }
+  };
 
-  useEffect(() => {
-    handleTransform(encode(code));
-  }, [code, handleTransform]);
+  const {output, result} = useMemo<Partial<Transformed>>(() => {
+    if (transform) {
+      return transform(code, JSON.parse(config));
+    }
+    return {};
+  }, [code, config, transform]);
 
   if (!transform || !monaco) {
     return (
@@ -112,9 +78,19 @@ export default function Workspace() {
   }
 
   return (
-    <Main>
-      <InputEditor code={code} onChange={handleCodeChange} config={CONFIG} />
-      <OutputEditor result={result} />
-    </Main>
+    <Grid
+      templateColumns="repeat(2, 1fr)"
+      templateRows="repeat(2, 1fr)"
+      px={4}
+      py={2}
+      rowGap={2}
+      columnGap={4}
+      flex={1}
+    >
+      <InputEditor code={code} onChange={handleCodeChange} />
+      <OutputEditor code={output} />
+      <ConfigEditor config={config} onChange={handleConfigChange} />
+      <ResultEditor result={result} />
+    </Grid>
   );
 }
